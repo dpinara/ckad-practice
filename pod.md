@@ -1,56 +1,31 @@
-Headers
-# This is an <h1> tag
-## This is an <h2> tag
-###### This is an <h6> tag
-Emphasis
-*This text will be italic*
-_This will also be italic_
-
-**This text will be bold**
-__This will also be bold__
-
-_You **can** combine them_
-Lists
-Unordered
-* Item 1
-* Item 2
-    * Item 2a
-    * Item 2b
-      Ordered
-1. Item 1
-1. Item 2
-1. Item 3
-    1. Item 3a
-    1. Item 3b
-       Images
-       ![GitHub Logo](/images/logo.png)
-       Format: ![Alt Text](url)
-       Links
-       http://github.com - automatic!
-       [GitHub](http://github.com)
-       Blockquotes
-       As Kanye West said:
-
-> We're living the future so
+**Pod**
 > the present is our past.
-Inline code
-I think you should use an
-`<addr>` element here instead.
 
-
-Task Lists
-- [x] @mentions, #refs, [links](), **formatting**, and <del>tags</del> supported
-- [x] list syntax required (any unordered or ordered list supported)
-- [x] this is a complete item
-- [ ] this is an incomplete item
-
-
-First Header | Second Header
------------- | -------------
-Content from cell 1 | Content from cell 2
-Content in the first column | Content in the second column
-
-
-
-GitHub supports emoji! :sparkles: :camel: :boom:
-
+````
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+  labels:
+    app: webserver
+spec:
+  containers:
+  - name: mycontainer
+    image: nginx:latest
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        memory: "128Mi" # 128Mi = 128 mebibytes
+        cpu: "500m"     # 500m = 500 milliCPUs (1/2 CPU)
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 80
+    # Multi container pods
+    - name: counter
+      image: lrakai/microservices:counter-v1
+      env:
+        - name: API_URL
+          value: http://localhost:8080     
+````
