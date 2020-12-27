@@ -45,8 +45,24 @@ spec:
 ````
 
 ```yaml
-
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: redis-access
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: redis
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          access: redis
 ````
+##### Note - for "app: redis" pod it say which pod can do ingress ie "access: redis"
 
 ```yaml
 
@@ -60,3 +76,6 @@ spec:
 
 ````
 
+
+```text
+```

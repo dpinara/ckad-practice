@@ -4,8 +4,8 @@
 
 
 ```YAML
-kind: PersistentVolume
 apiVersion: v1
+kind: PersistentVolume
 metadata:
   name: myvolume
 spec:
@@ -17,4 +17,7 @@ spec:
     - ReadWriteMany
   hostPath:
     path: /etc/foo
+```
+
+```text
 ```
