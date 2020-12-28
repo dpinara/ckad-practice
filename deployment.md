@@ -1,4 +1,4 @@
-> **PersistentVolume**
+> **deployment**
 ```bash
 kubectl expose deployment  redis --port=6379 --name=redis --type=ClusterIP --dry-run -o yaml
 

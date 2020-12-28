@@ -1,7 +1,9 @@
-> **PersistentVolume**
+> **command**
 ```bash
-kubectl run sega --image=busybox --command seep 3600 -o yaml --dry-run 
+kubectl run sega --image=busybox -- seep 3600 -o yaml --dry-run 
 ```
+######   1) Note - use -- for command. This seems to be new syntax
+######   2) Note - sh -c In ubuntu, sh is usually symlinked to /bin/dash . That is use dash, instead of sh. To get this force, use "sh -c" 
 
 ```YAML
 apiVersion: v1
@@ -37,7 +39,6 @@ status: {}
         - -c
         - echo Hello Kubernetes! && sleep 3600
         image: busybox
-
 ```
 
 ```text

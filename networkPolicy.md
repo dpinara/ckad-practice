@@ -1,23 +1,90 @@
-> **PersistentVolume**
+> **NetworkPolicy**
 ```bash
 ```
 
-
 ```YAML
-apiVersion: v1
-kind: PersistentVolume
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
 metadata:
-  name: myvolume
+  name: access-nginx # pick a name
 spec:
-  storageClassName: normal
-  capacity:
-    storage: 10Gi
-  accessModes:
-    - ReadWriteOnce
-    - ReadWriteMany
-  hostPath:
-    path: /etc/foo
+  podSelector:
+    matchLabels:
+      app: nginx # selector for the pods
+  ingress: # allow ingress traffic
+  - from:
+    - podSelector: # from pods
+        matchLabels: # with this label
+          access: granted
 ```
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: shoppingcart-netpolicy
+spec:
+  podSelector:
+    matchLabels:
+      app: shopping-cart 
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          tenant: manning
+    ports:
+    - port: 80
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: database
+    ports:
+    - port: 5432
+    
+
+````
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ipblock-netpolicy
+spec:
+  podSelector:
+    matchLabels:
+      app: shopping-cart
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 192.168.1.0/24
+
+````
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: redis-access
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: redis
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          access: redis
+##### Note - for "app: redis" pod it say which pod can do ingress ie "access: redis"
+```yaml
+
+```yaml
+
+````
+
 
 ```text
 Create a resource from a file or from stdin.
@@ -81,5 +148,5 @@ Usage:
 
 Use "kubectl <command> --help" for more information about a given command.
 Use "kubectl options" for a list of global command-line options (applies to all commands).
-
+controlplane $
 ```

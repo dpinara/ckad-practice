@@ -1,4 +1,4 @@
-> **PersistentVolume**
+> **Service**
 ```bash
 
 kubectl get endpoints <Service_Name>

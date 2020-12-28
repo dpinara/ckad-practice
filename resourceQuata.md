@@ -1,4 +1,4 @@
-> **job**
+> **ResourceQuota**
 ```bash
 ```
 
@@ -10,17 +10,18 @@
 ```
 
 ```text
-Create a job with the specified name.
+Create a resourcequota with the specified name, hard limits and optional scopes
+
+Aliases:
+quota, resourcequota
 
 Examples:
-  # Create a job
-  kubectl create job my-job --image=busybox
+  # Create a new resourcequota named my-quota
+  kubectl create quota my-quota
+--hard=cpu=1,memory=1G,pods=2,services=3,replicationcontrollers=2,resourcequotas=1,secrets=5,persistentvolumeclaims=10
 
-  # Create a job with command
-  kubectl create job my-job --image=busybox -- date
-
-  # Create a job from a CronJob named "a-cronjob"
-  kubectl create job test-job --from=cronjob/a-cronjob
+  # Create a new resourcequota named best-effort
+  kubectl create quota best-effort --hard=pods=100 --scopes=BestEffort
 
 Options:
       --allow-missing-template-keys=true: If true, ignore any errors in templates when a field or map key is missing in
@@ -28,18 +29,20 @@ the template. Only applies to golang and jsonpath output formats.
       --dry-run='none': Must be "none", "server", or "client". If client strategy, only print the object that would be
 sent, without sending it. If server strategy, submit server-side request without persisting the resource.
       --field-manager='kubectl-create': Name of the manager used to track field ownership.
-      --from='': The name of the resource to create a Job from (only cronjob is supported).
-      --image='': Image name to run.
+      --hard='': A comma-delimited set of resource=quantity pairs that define a hard limit.
   -o, --output='': Output format. One of:
 json|yaml|name|go-template|go-template-file|template|templatefile|jsonpath|jsonpath-as-json|jsonpath-file.
       --save-config=false: If true, the configuration of current object will be saved in its annotation. Otherwise, the
 annotation will be unchanged. This flag is useful when you want to perform kubectl apply on this object in the future.
+      --scopes='': A comma-delimited set of quota scopes that must all match each object tracked by the quota.
       --template='': Template string or path to template file to use when -o=go-template, -o=go-template-file. The
 template format is golang templates [http://golang.org/pkg/text/template/#pkg-overview].
       --validate=true: If true, use a schema to validate the input before sending it
 
 Usage:
-  kubectl create job NAME --image=image [--from=cronjob/name] -- [COMMAND] [args...] [options]
+  kubectl create quota NAME [--hard=key1=value1,key2=value2] [--scopes=Scope1,Scope2] [--dry-run=server|client|none]
+[options]
 
 Use "kubectl options" for a list of global command-line options (applies to all commands).
+controlplane $
 ```
