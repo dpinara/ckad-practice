@@ -1,5 +1,11 @@
 > **PersistentVolume**
 ```bash
+
+You need to utilize a PersistentVolume for application storage in a Kubernetes cluster. What field of a PersistentVolume can you use to control the number of nodes that can mount the PersistentVolume for reading and writing?
+
+answer - accessMode
+
+
 ```
 
 

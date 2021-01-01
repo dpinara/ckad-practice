@@ -17,6 +17,59 @@ spec:
       storage: 4Gi
 ```
 
+####PV and PVC
+```text 
+ubuntu@ip-10-0-128-5:~$ k describe pv
+Name:              pvc-c8d2e82a-719f-46d7-b394-902d973b22da
+Labels:            failure-domain.beta.kubernetes.io/region=us-west-2
+                   failure-domain.beta.kubernetes.io/zone=us-west-2b
+Annotations:       kubernetes.io/createdby: aws-ebs-dynamic-provisioner
+                   pv.kubernetes.io/bound-by-controller: yes
+                   pv.kubernetes.io/provisioned-by: kubernetes.io/aws-ebs
+Finalizers:        [kubernetes.io/pv-protection]
+StorageClass:      gp2
+Status:            Bound
+Claim:             persistence/db-data
+Reclaim Policy:    Delete
+Access Modes:      RWO
+VolumeMode:        Filesystem
+Capacity:          2Gi
+Node Affinity:
+  Required Terms:
+    Term 0:        failure-domain.beta.kubernetes.io/zone in [us-west-2b]
+                   failure-domain.beta.kubernetes.io/region in [us-west-2]
+Message:
+Source:
+    Type:       AWSElasticBlockStore (a Persistent Disk resource in AWS)
+    VolumeID:   aws://us-west-2b/vol-01381a511d087d6d8
+    FSType:     ext4
+    Partition:  0
+    ReadOnly:   false
+Events:         <none>
+
+ubuntu@ip-10-0-128-5:~$ k describe pvc
+Name:          db-data
+Namespace:     persistence
+StorageClass:  gp2
+Status:        Bound
+Volume:        pvc-c8d2e82a-719f-46d7-b394-902d973b22da
+Labels:        <none>
+Annotations:   pv.kubernetes.io/bind-completed: yes
+               pv.kubernetes.io/bound-by-controller: yes
+               volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/aws-ebs
+Finalizers:    [kubernetes.io/pvc-protection]
+Capacity:      2Gi
+Access Modes:  RWO
+VolumeMode:    Filesystem
+Mounted By:    <none>
+Events:
+  Type    Reason                 Age    From                         Message
+  ----    ------                 ----   ----                         -------
+  Normal  ProvisioningSucceeded  4m14s  persistentvolume-controller  Successfully provisioned volume pvc-c8d2e82a-719f-46d7-b394-902d973b22da using kubernetes.io/aws-ebs
+ubuntu@ip-10-0-128-5:~$
+
+```
+
 ```text
 
 controlplane $ k create pvc --help

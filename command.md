@@ -1,6 +1,10 @@
 > **command**
 ```bash
 kubectl run sega --image=busybox -- seep 3600 -o yaml --dry-run 
+
+command: ["/bin/sh","-c"]
+args: ["sleep 30 && httpd-foreground"]
+
 ```
 ######   1) Note - use -- for command. This seems to be new syntax
 ######   2) Note - sh -c In ubuntu, sh is usually symlinked to /bin/dash . That is use dash, instead of sh. To get this force, use "sh -c" 

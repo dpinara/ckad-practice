@@ -7,6 +7,12 @@ kubectl  create deploy redis \
 --replicas=1 \
 -o yaml --dry-run=client 
 
+#To set the label. here is separate object for setting label
+kubectl label deploy foo unhealthy=true
+# RollingUpdate and Recreate are two strategy. When we use type: Recreate, we dont need to specify any other settings
+
+
+
 ```
 ###### Note: when we need to expose ClusterIP, we need to write service. --port doesnt work as part of imperative command.
 

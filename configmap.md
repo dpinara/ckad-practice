@@ -1,9 +1,76 @@
 > **confiMap**
 ```bash
-kubectl create configmap cm-3392845 --from-literal=DB_NAME=SQL3322 --from-literal=DB_HOST=sql322.mycompany.com
+kubectl create configmap app-config --from-literal=DB_NAME=testdb \
+  --from-literal=COLLECTION_NAME=messages
+## Data looks as follows
+apiVersion: v1
+data:
+  COLLECTION_NAME: messages
+  DB_NAME: testdb
 
 ```
 
+
+```YAML
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db 
+spec:
+  containers:
+  - image: mongo:4.0.6
+    name: mongodb
+    # Mount as volume 
+    volumeMounts:
+    - name: config
+      mountPath: /config
+    ports:
+    - containerPort: 27017
+      protocol: TCP
+  volumes:
+  - name: config
+    # Declare the configMap to use for the volume
+    configMap:
+      name: app-config
+EOF
+
+```
+````bash
+
+# The ouput looks like this 
+  ubuntu@ip-10-0-128-5:~$ kubectl exec db -it -- ls /config
+  COLLECTION_NAME  DB_NAME
+  ubuntu@ip-10-0-128-5:~$ kubectl exec db -it -- /bin/sh
+  # ls -ltr /config
+  total 0
+  lrwxrwxrwx 1 root root 14 Dec 31 16:09 DB_NAME -> ..data/DB_NAME
+  lrwxrwxrwx 1 root root 22 Dec 31 16:09 COLLECTION_NAME -> ..data/COLLECTION_NAME
+  # cat ./COLLECTION_NAME
+  messages
+  # cat DB_NAME
+  testdb
+#
+
+````
+````text
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config
+data:
+  fluent.conf: |
+    # First log source (tailing a file at /var/log/1.log)
+    <source>
+      @type tail
+
+# This is how volume gets created
+
+/fluentd/etc # ls -ltr
+total 0
+lrwxrwxrwx    1 root     root            18 Dec 31 18:27 fluent.conf -> ..data/fluent.conf
+/fluentd/etc #
+
+````
 
 ```YAML
 apiVersion: v1
@@ -84,7 +151,25 @@ data:
 
 ```
 
+##### Multiline config.
 ```YAML
+cat <<EOF > mysql-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+data:
+  master.cnf: |
+   # Apply this config only on the master.
+   [mysqld]
+   log-bin
+  slave.cnf: |
+    # Apply this config only on slaves.
+    [mysqld]
+    super-read-only
+EOF
 
 ```
 

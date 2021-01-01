@@ -1,5 +1,8 @@
 > **env**
 ```bash
+kubectl exec -it pd -- env #shows the environment varibales
+
+
 ```
 
 

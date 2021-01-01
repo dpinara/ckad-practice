@@ -44,6 +44,7 @@ spec:
 
 ````
 
+##### Note - port of service to be view using describe svc, port using svc port showing up false results.
 ````
 
 ```yaml

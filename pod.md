@@ -4,10 +4,74 @@ k run pod1 \
     -o yaml \
     --dry-run=client \
     --image=busybox \
+    --env="USER=dpinara" \                      # Unlike label We have to mention each env separately..
+    --env="USER_ACCESS=pw"" \
+    --labels="USER=dpinara,USER_ACCESS=pw" \    # We can use multiple label comma separated..
     --requests "cpu=100m,memory=256Mi" \
     --limits "cpu=200m,memory=512Mi" \
     --command \
     -- sh -c "sleep 1d"
+    
+k run pd --image=busybox  -o yaml --dry-run=client --env=USER=dpinara --env=USER_ACCESS=pw --port=8080 --labels="USER=dpinara,USER_ACCESS=pw" -- sleep 3000
+
+```
+````text
+The number of consecurtive successes is configured via the successThreshold field, and the number of consecutive failures required to tranisition from success to failure is failureThreshold. The probe runs every periodSeconds and each probe will wait up to timeoutSeconds to complete.
+
+````
+
+##### Note - -- for command has to be in last 
+
+
+```text
+Notice that the nginx-container has started however there are no messages in the log that indicate that it's actually running so we'll check this by mapping port 19999 on the local machine to port 80 in the pod-b pod, which should point to the nginx-container which has the Nginx web server running on port 80.
+kubectl port-forward pods/pod-b 19999:80 --namespace ggckad-s0
+When we execute the line above, the output should look like what we have below:
+
+Finally, we can now test that Nginx is running by browsing localhost:19999.
+
+```
+
+```yaml
+ubuntu@ip-10-0-128-5:~$ kubectl run pd \
+  --image=busybox  -o yaml \
+  --dry-run=client \
+  --env=USER=dpinara --env=USER_ACCESS=pw \
+  --port=8080 \
+  --labels="USER=dpinara,USER_ACCESS=pw" \
+  --serviceaccount='sa' 
+  -- sh -c "sleep 3000"
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    USER: dpinara
+    USER_ACCESS: pw
+  name: pd
+spec:
+  containers:
+  - args:
+    - sh
+    - -c
+    - sleep 3000
+    env:
+    - name: USER
+      value: dpinara
+    - name: USER_ACCESS
+      value: pw
+    image: busybox
+    name: pd
+    ports:
+    - containerPort: 8080
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  serviceAccountName: sa
+status: {}
+ubuntu@ip-10-0-128-5:~$ 
+
 ```
 
 ```yaml
@@ -78,6 +142,18 @@ spec:
   # Multi containers...
   - name: mycontainer2
     image: nginx:latest
+````
+
+````text
+#At times we can not get details from get, describe, log, then we can try doing get -o yaml and checking lastState. Here it says that pod crashed due ot OOM
+ 
+    lastState:
+      terminated:
+        containerID: docker://0eb3e478cff2492b7fbcdeafb4584ca48702637b92d8c5ef6c84e2cebebfc708
+        exitCode: 1
+        finishedAt: "2021-01-01T10:11:01Z"
+        reason: OOMKilled
+        startedAt: "2021-01-01T10:11:01Z"
 ````
 
 ````text

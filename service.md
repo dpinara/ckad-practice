@@ -2,6 +2,31 @@
 ```bash
 
 kubectl get endpoints <Service_Name>
+kubectl expose pod webserver-logs --type=LoadBalancer
+# Simply put the EXTERNAL_IP on browser and it will work
+
+# One can expose pod as well
+# command for exposing is sequential and mothful
+kubectl expose pod redis --name=redis-service --port=6379
+
+
+controlplane $ k get all
+NAME                  READY   STATUS    RESTARTS   AGE
+pod/simple-webapp-1   1/1     Running   0          11s
+
+NAME                     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+service/kubernetes       ClusterIP   10.96.0.1      <none>        443/TCP          2m59s
+service/webapp-service   NodePort    10.97.125.46   <none>        8080:30080/TCP   11s
+
+controlplane $ cat ./curl-test.sh
+for i in {1..20}; do
+   kubectl exec --namespace=kube-public curl -- sh -c 'test=`wget -qO- -T 2  http://webapp-service.default.svc.cluster.local:8080/ready 2>&1` &&echo "$test OK" || echo "Failed"';
+   echo ""
+donecontrolplane $ ./curl-test.sh
+
+kubectl exec --namespace=kube-public curl -- wget -qO- http://webapp-service.default.svc.cluster.local:8080/crash
+
+
 ```
 
 ```YAML
@@ -23,6 +48,41 @@ spec:
 status:
   loadBalancer: {}
 ```
+
+##### clusterIP: None for headliess service
+```YAML
+# Headless service for stable DNS entries of StatefulSet members.
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  ports:
+    - name: mysql
+      port: 3306
+  clusterIP: None
+  selector:
+    app: mysql
+---
+# Client service for connecting to any MySQL instance for reads.
+# For writes, you must instead connect to the master: mysql-0.mysql.
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-read
+  labels:
+    app: mysql
+spec:
+  ports:
+    - name: mysql
+      port: 3306
+  selector:
+    app: mysql
+```
+
+
 
 ```text
 

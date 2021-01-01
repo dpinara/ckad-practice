@@ -1,14 +1,46 @@
 > **Secret**
 ```bash
-kubectl create secret generic  db-secret-xxdf --from-literal=DB_Host=sql01     --from-literal=DB_Password=password123
+kubectl create secret generic app-secret --from-literal=password=123457
+
+kubectl get secret app-secret -o jsonpath="{.data.password}" \
+  | base64 --decode \
+  && echo
+
+ubuntu@ip-10-0-128-5:~$ echo "MTIzNDU3"  | base64 --decode   && echo
+123457
+ubuntu@ip-10-0-128-5:~$
+
+##envFrom: --> Search for envFrom: in documentation when we need to load entire environment variables from a secret. env: otherwise ( same rule applies for configMap )
+
+
 
 ```
 
 
 ```YAML
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-secret
+spec:
+  containers:
+  - image: busybox:1.30.1
+    name: busybox
+    args:
+    - sleep
+    - "3600"
+    env:
+    - name: PASSWORD      # Name of environment variable
+      valueFrom:
+        secretKeyRef:
+          name: app-secret  # Name of secret
+          key: password     # Name of secret key
+
 ```
 
-```YAML
+```bash
+kubectl exec pod-secret -- /bin/sh -c 'echo $PASSWORD'
+123457
 ```
 
 ```text

@@ -1,5 +1,13 @@
 > **job**
 ```bash
+
+```
+```text
+backoffLimit: Number of times a Job will retry before marking a Job as failed
+completions: Number of Pod completions the Job needs before being considered a success
+parallelism: Number of Pods the Job is allowed to run in parallel
+spec.template.spec.restartPolicy: Job Pods default to never attempting to restart. Instead the Job is responsible for managing the restart of failed Pods.
+
 ```
 
 
