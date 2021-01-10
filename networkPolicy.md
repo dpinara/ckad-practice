@@ -1,5 +1,11 @@
 > **NetworkPolicy**
 ```bash
+# Always remember that egress is to and ingress is from. While copy paste, we chagne ingress and egress vice versa, howeve we also need to change to or from accordingly
+
+#Network policy and ingress are both different objects. so one can say k get netpol and one can also check k get ingress. To makes things complicated, we use ingress and egress inside network policy. However ingress used inside network policy is different than ingress object out there independently.  There is nothing like egress object though.
+
+Network policy is like  stateful security context. However ingress is to redirect  DNS as per patters.
+
 ```
 
 ```YAML

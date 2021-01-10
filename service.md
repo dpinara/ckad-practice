@@ -27,6 +27,47 @@ donecontrolplane $ ./curl-test.sh
 kubectl exec --namespace=kube-public curl -- wget -qO- http://webapp-service.default.svc.cluster.local:8080/crash
 
 
+# Considering we have service which is exposing secure pod on port 80
+controlplane $ k describe svc secure-service
+Name:              secure-service
+Namespace:         default
+Labels:            run=secure-pod
+Annotations:       <none>
+Selector:          run=secure-pod
+Type:              ClusterIP
+IP:                10.106.23.59
+Port:              <unset>  80/TCP
+TargetPort:        80/TCP
+Endpoints:         10.32.0.6:80
+Session Affinity:  None
+Events:            <none>
+controlplane $
+
+# To test if other pod ie webapp-color can access this pod through service 
+controlplane $ k exec -it webapp-color -- /bin/sh
+/opt # nc -z -v -w 1 secure-service 80
+secure-service (10.106.23.59:80) open
+
+/opt # nc --help
+BusyBox v1.28.4 (2018-07-17 15:21:40 UTC) multi-call binary.
+
+Usage: nc [OPTIONS] HOST PORT  - connect
+nc [OPTIONS] -l -p PORT [HOST] [PORT]  - listen
+
+        -e PROG Run PROG after connect (must be last)
+        -l      Listen mode, for inbound connects
+        -lk     With -e, provides persistent server
+        -p PORT Local port
+        -s ADDR Local address
+        -w SEC  Timeout for connects and final net reads
+        -i SEC  Delay interval for lines sent
+        -n      Don't do DNS resolution
+        -u      UDP mode
+        -v      Verbose
+        -o FILE Hex dump traffic
+        -z      Zero-I/O mode (scanning)
+/opt #
+
 ```
 
 ```YAML

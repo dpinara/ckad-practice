@@ -14,6 +14,14 @@ k run pod1 \
     
 k run pd --image=busybox  -o yaml --dry-run=client --env=USER=dpinara --env=USER_ACCESS=pw --port=8080 --labels="USER=dpinara,USER_ACCESS=pw" -- sleep 3000
 
+# Temporary pod
+kubectl run busybox --image=busybox --rm -it --restart=Never -n ckad-prep -- /bin/sh
+
+
+# You can print out the token from the volume source at /var/run/secrets/kubernetes.io/serviceaccount.
+$ kubectl exec -it backend -- /bin/sh
+/ # cat /var/run/secrets/kubernetes.io/serviceaccount/token
+eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9
 ```
 ````text
 The number of consecurtive successes is configured via the successThreshold field, and the number of consecutive failures required to tranisition from success to failure is failureThreshold. The probe runs every periodSeconds and each probe will wait up to timeoutSeconds to complete.

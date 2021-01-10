@@ -11,7 +11,11 @@ kubectl  create deploy redis \
 kubectl label deploy foo unhealthy=true
 # RollingUpdate and Recreate are two strategy. When we use type: Recreate, we dont need to specify any other settings
 
-
+kubectl set image deploy ng nginx=nginx:1.9.1
+kubectl rollout history deploy ng
+kubectl rollout status deploy ng
+kubectl rollout undo deploy ng
+kubectl rollout undo deploy ng --to-revision=3
 
 ```
 ###### Note: when we need to expose ClusterIP, we need to write service. --port doesnt work as part of imperative command.

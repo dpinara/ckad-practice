@@ -70,6 +70,50 @@ ubuntu@ip-10-0-128-5:~$
 
 ```
 
+
+````yaml
+#cat pv
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-log
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+      path: /pv/log
+
+#cat pvc
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: claim-log-1
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Mi
+
+#Note, we must have same storageCloass and filetype, if done copy paste then need to consider that . Other param - 
+#volumeMode: Filesystem
+#persistentVolumeReclaimPolicy: Delete
+#  On deleting pvc, it wont get deleted, it will be stuck. The reason is pv is used by pod. 
+#  Now on deleting pod, pvc will get deleted ( get wong find anything ). and pv will be retained. Pl note , its retained, not available. since it is already used by pod and it will have data so cant be available again. 
+
+  controlplane $ k get pv,pvc
+NAME                      CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                 STORAGECLASS   REASON   AGE
+persistentvolume/pv-log   100Mi      RWX            Retain           Bound    default/claim-log-1                           4m2s
+
+NAME                                STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+persistentvolumeclaim/claim-log-1   Bound    pv-log   100Mi      RWX                           3m55s
+controlplane $
+
+````
+
 ```text
 
 controlplane $ k create pvc --help
