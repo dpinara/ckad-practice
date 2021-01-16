@@ -28,6 +28,10 @@ tolerations:
     value: "value1"
     effect: "NoSchedule"
 
+
+  controlplane $ k create -f bee.yaml
+The Pod "bee" is invalid: spec.tolerations[0].operator: Invalid value: core.Toleration{Key:"spray", Operator:"Exists", Value:"mortein", Effect:"NoSchedule", TolerationSeconds:(*int64)(nil)}: value must be empty when `operator` is 'Exists'
+  controlplane $ vi bee.yaml
 ```
 
 ```yaml

@@ -17,15 +17,31 @@ pod/simple-webapp-1   1/1     Running   0          11s
 NAME                     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
 service/kubernetes       ClusterIP   10.96.0.1      <none>        443/TCP          2m59s
 service/webapp-service   NodePort    10.97.125.46   <none>        8080:30080/TCP   11s
+---
+# See the naming convention for srvice and how it can be accessed.
 
-controlplane $ cat ./curl-test.sh
+controlplane $ cat curl-test.sh
 for i in {1..20}; do
-   kubectl exec --namespace=kube-public curl -- sh -c 'test=`wget -qO- -T 2  http://webapp-service.default.svc.cluster.local:8080/ready 2>&1` &&echo "$test OK" || echo "Failed"';
+   kubectl exec --namespace=kube-public curl -- sh -c 'test=`wget -qO- -T 2  http://webapp-service.default.svc.cluster.local:8080/ready 2>&1` && echo "$test OK" || echo "Failed"';
    echo ""
-donecontrolplane $ ./curl-test.sh
-
+donecontrolplane $ cat freeze-app.sh
+nohup kubectl exec --namespace=kube-public curl -- wget -qO- http://webapp-service.default.svc.cluster.local:8080/freeze &
+controlplane $ cat crash-app.sh
 kubectl exec --namespace=kube-public curl -- wget -qO- http://webapp-service.default.svc.cluster.local:8080/crash
+controlplane $ k get svc -o wide
+NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE     SELECTOR
+kubernetes       ClusterIP   10.96.0.1      <none>        443/TCP          10m     <none>
+webapp-service   NodePort    10.97.22.150   <none>        8080:30080/TCP   9m11s   name=simple-webapp
+controlplane $
 
+
+controlplane $ cat curl-test.sh
+for i in {1..35}; do
+   kubectl exec --namespace=kube-public curl -- sh -c 'test=`wget -qO- -T 2  http://webapp-service.default.svc.cluster.local:8080/info 2>&1` && echo "$test OK" || echo "Failed"';
+   echo ""
+donecontrolplane $ k get ns
+
+---
 
 # Considering we have service which is exposing secure pod on port 80
 controlplane $ k describe svc secure-service

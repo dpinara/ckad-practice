@@ -5,7 +5,7 @@
 ```
 ```text
 backoffLimit: Number of times a Job will retry before marking a Job as failed
-completions: Number of Pod completions the Job needs before being considered a success. If completions value is 6, than six pods to be created before marking that job complete.
+completions: Number of Pod completions the Job needs before being considered a success. If completions value is 6, than six pods to be created ( which ends susscessfully) before marking that job complete.
 parallelism: Number of Pods the Job is allowed to run in parallel
 spec.template.spec.restartPolicy: Job Pods default to never attempting to restart. Instead the Job is responsible for managing the restart of failed Pods.
 
