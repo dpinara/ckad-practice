@@ -7,6 +7,9 @@ kubectl  create deploy redis \
 --replicas=1 \
 -o yaml --dry-run=client 
 
+kubectl scale deployment nginx --replicas=4
+
+
 #To set the label. here is separate object for setting label
 kubectl label deploy foo unhealthy=true
 # RollingUpdate and Recreate are two strategy. When we use type: Recreate, we dont need to specify any other settings

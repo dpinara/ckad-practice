@@ -17,16 +17,3 @@ kubectl get po nginx --v=9
 
 
 ```
-
-
-```YAML
-```
-
-```YAML
-```
-
-```text
-```
-
-```text
-```

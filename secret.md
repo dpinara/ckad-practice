@@ -10,11 +10,17 @@ ubuntu@ip-10-0-128-5:~$ echo "MTIzNDU3"  | base64 --decode   && echo
 123457
 ubuntu@ip-10-0-128-5:~$
 
+echo -n 'password' | base64
+echo -n 'ssds@WWW' | base64 --decode
+
+
 ##envFrom: --> Search for envFrom: in documentation when we need to load entire environment variables from a secret. env: otherwise ( same rule applies for configMap )
 
 
 
 ```
+
+![Service naming Convention](<./images/secret-vol.JPG>)
 
 
 ```YAML

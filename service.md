@@ -1,6 +1,7 @@
 > **Service**
 ```bash
 
+
 kubectl get endpoints <Service_Name>
 kubectl expose pod webserver-logs --type=LoadBalancer
 # Simply put the EXTERNAL_IP on browser and it will work
@@ -8,6 +9,26 @@ kubectl expose pod webserver-logs --type=LoadBalancer
 # One can expose pod as well
 # command for exposing is sequential and mothful
 kubectl expose pod redis --name=redis-service --port=6379
+
+
+kubectl expose pod redis --port=6379 --name redis-service --dry-run=client -o yaml
+#(This will automatically use the pod's labels as selectors)
+
+OR 
+kubectl create service clusterip redis --tcp=6379:6379 --dry-run=client -o yaml  (This will not use the pods labels as selectors, instead it will assume selectors as app=redis. You cannot pass in selectors as an option. So it does not work very well if your pod has a different label set. So generate the file and modify the selectors before creating the service)
+
+kubectl expose pod nginx --port=80 --name nginx-service --type=NodePort --dry-run=client -o yaml
+
+(This will automatically use the pod's labels as selectors, but you cannot specify the node port. You have to generate a definition file and then add the node port in manually before creating the service with the pod.)
+
+Or
+
+kubectl create service nodeport nginx --tcp=80:80 --node-port=30080 --dry-run=client -o yaml
+
+(This will not use the pods labels as selectors)
+
+Both the above commands have their own challenges. While one of it cannot accept a selector the other cannot accept a node port. I would recommend going with the `kubectl expose` command. If you need to specify a node port, generate a definition file using the same command and manually input the nodeport before creating the service.
+
 
 
 controlplane $ k get all
@@ -34,6 +55,8 @@ kubernetes       ClusterIP   10.96.0.1      <none>        443/TCP          10m  
 webapp-service   NodePort    10.97.22.150   <none>        8080:30080/TCP   9m11s   name=simple-webapp
 controlplane $
 
+#Note :  To refer resource from one namespace to other namespace, use 
+<resource name><namespace><svc.cluster.local>
 
 controlplane $ cat curl-test.sh
 for i in {1..35}; do
@@ -42,6 +65,8 @@ for i in {1..35}; do
 donecontrolplane $ k get ns
 
 ---
+
+
 
 # Considering we have service which is exposing secure pod on port 80
 controlplane $ k describe svc secure-service
@@ -85,6 +110,7 @@ nc [OPTIONS] -l -p PORT [HOST] [PORT]  - listen
 /opt #
 
 ```
+![Service naming Convention](<./images/service-dns.JPG>)
 
 ```YAML
 apiVersion: v1
